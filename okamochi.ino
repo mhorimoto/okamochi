@@ -71,7 +71,7 @@ LiquidCrystal lcd(RS,RW,ENA,DB0,DB1,DB2,DB3,DB4,DB5,DB6,DB7);
 AT24C256      atmem(0);
 EthernetClient client;
 
-char pgname[21];
+char pgname[21],lcdtxt[21];
 /////////////////////////////////////
 //IP reset jupmer pin setting
 //IPアドレスリセット用ジャンパーピン設定
@@ -91,7 +91,7 @@ const byte U_InitPin_Sense=LOW;
 //Node basic infomation
 //ノードの基本情報
 ///////////////////////////////////
-const char U_name[] PROGMEM= "M304jp Node v1.00";//MAX 20 chars
+const char U_name[] PROGMEM= "M304jp Node v1.10";//MAX 20 chars
 const char U_vender[] PROGMEM= "HOLLY&Co.Ltd.";//MAX 20 chars
 const char U_uecsid[] PROGMEM= "10100C00000B";//12 chars fixed
 const char U_footnote[] PROGMEM= "M304jp UARDECS version";
@@ -127,9 +127,9 @@ const char UECSOFF[] PROGMEM= "OFF";
 const char UECSON[] PROGMEM= "ON";
 const char UECSAUTO[] PROGMEM= "AUTO";
 const char *stringSELECT[3]={
-UECSOFF,
-UECSON,
-UECSAUTO,
+  UECSOFF,
+  UECSON,
+  UECSAUTO,
 };
 
 //入力された選択肢の位置を受け取る変数
@@ -153,8 +153,8 @@ const char NOTE3[] PROGMEM= "SHOWSTRING";
 const char SHOWSTRING_OFF[] PROGMEM= "OUTPUT:OFF";
 const char SHOWSTRING_ON [] PROGMEM= "OUTPUT:ON";
 const char *stringSHOW[2]={
-SHOWSTRING_OFF,
-SHOWSTRING_ON,
+  SHOWSTRING_OFF,
+  SHOWSTRING_ON,
 };
 signed long showValueStatusTemp;
 
@@ -173,9 +173,9 @@ signed long showValueHumidity;
 const char NAME5[] PROGMEM= "UserSwitch";
 const char NOTE5[] PROGMEM= "SELECTDATA";
 const char *stringSELECT_Humidity[3]={
-UECSOFF,
-UECSON,
-UECSAUTO,
+  UECSOFF,
+  UECSON,
+  UECSAUTO,
 };
 
 //入力された選択肢の位置を受け取る変数
@@ -197,8 +197,8 @@ signed long setONHumidityFromWeb;
 const char NAME7[] PROGMEM= "Now status";
 const char NOTE7[] PROGMEM= "SHOWSTRING";
 const char *stringSHOW_Humidity[2]={
-SHOWSTRING_OFF,
-SHOWSTRING_ON,
+  SHOWSTRING_OFF,
+  SHOWSTRING_ON,
 };
 signed long showValueStatusHumidity;
 
@@ -217,9 +217,9 @@ signed long showValueIlluminance;
 const char NAME9[] PROGMEM= "UserSwitch";
 const char NOTE9[] PROGMEM= "SELECTDATA";
 const char *stringSELECT_Illuminance[3]={
-UECSOFF,
-UECSON,
-UECSAUTO,
+  UECSOFF,
+  UECSON,
+  UECSAUTO,
 };
 
 //入力された選択肢の位置を受け取る変数
@@ -241,8 +241,8 @@ signed long setONIlluminanceFromWeb;
 const char NAME11[] PROGMEM= "Now status";
 const char NOTE11[] PROGMEM= "SHOWSTRING";
 const char *stringSHOW_Illuminance[2]={
-SHOWSTRING_OFF,
-SHOWSTRING_ON,
+  SHOWSTRING_OFF,
+  SHOWSTRING_ON,
 };
 signed long showValueStatusIlluminance;
 
@@ -262,9 +262,9 @@ signed long showValueREncoder;
 const char NAME13[] PROGMEM= "UserSwitch";
 const char NOTE13[] PROGMEM= "SELECTDATA";
 const char *stringSELECT_REncoder[3]={
-UECSOFF,
-UECSON,
-UECSAUTO,
+  UECSOFF,
+  UECSON,
+  UECSAUTO,
 };
 
 //入力された選択肢の位置を受け取る変数
@@ -286,8 +286,8 @@ signed long setONREncoderFromWeb;
 const char NAME15[] PROGMEM= "Now status";
 const char NOTE15[] PROGMEM= "SHOWSTRING";
 const char *stringSHOW_REncoder[2]={
-SHOWSTRING_OFF,
-SHOWSTRING_ON,
+  SHOWSTRING_OFF,
+  SHOWSTRING_ON,
 };
 signed long showValueStatusREncoder;
 
@@ -299,22 +299,22 @@ const char** DUMMY = NULL;
 //表示素材の登録
 struct UECSUserHtml U_html[U_HtmlLine]={
 //{名前,入出力形式  ,単位 ,詳細説明,選択肢文字列  ,選択肢数,値     ,最小値,最大値,小数桁数}
-{NAME0, UECSSHOWDATA  ,UNIT0  ,NOTE0  , DUMMY   , 0 , &(showValueTemp)  , 0, 0, DECIMAL_DIGIT},
-{NAME1, UECSSELECTDATA  ,NONES  ,NOTE1  , stringSELECT  , 3 , &(setONOFFAUTO_Temp)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME2, UECSINPUTDATA ,UNIT2  ,NOTE2  , DUMMY   , 0 , &(setONTempFromWeb) , 100, 1000, DECIMAL_DIGIT},
-{NAME3, UECSSHOWSTRING  ,NONES  ,NOTE3  , stringSHOW  , 2 , &(showValueStatusTemp)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME4, UECSSHOWDATA  ,UNIT4  ,NOTE4  , DUMMY   , 0 , &(showValueHumidity)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME5, UECSSELECTDATA  ,NONES  ,NOTE5  , stringSELECT_Humidity , 3 , &(setONOFFAUTO_Humidity)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME6, UECSINPUTDATA ,UNIT6  ,NOTE6  , DUMMY   , 0 , &(setONHumidityFromWeb) , 10, 100, DECIMAL_DIGIT_0},
-{NAME7, UECSSHOWSTRING  ,NONES  ,NOTE7  , stringSHOW_Humidity , 2 , &(showValueStatusHumidity)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME8, UECSSHOWDATA  ,UNIT8  ,NOTE8  , DUMMY   , 0 , &(showValueIlluminance)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME9, UECSSELECTDATA  ,NONES  ,NOTE9  , stringSELECT_Illuminance , 3 , &(setONOFFAUTO_Illuminance)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME10, UECSINPUTDATA ,UNIT10  ,NOTE10, DUMMY   , 0 , &(setONIlluminanceFromWeb) , 0, 1023, DECIMAL_DIGIT_0},
-{NAME11, UECSSHOWSTRING  ,NONES  ,NOTE11  , stringSHOW_Illuminance , 2 , &(showValueStatusIlluminance)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME12, UECSSHOWDATA  ,UNIT12  ,NOTE12  , DUMMY   , 0 , &(showValueREncoder)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME13, UECSSELECTDATA  ,NONES  ,NOTE13  , stringSELECT_REncoder , 3 , &(setONOFFAUTO_REncoder)  , 0, 0, DECIMAL_DIGIT_0},
-{NAME14, UECSINPUTDATA ,UNIT14  ,NOTE14  , DUMMY   , 0 , &(setONREncoderFromWeb) , 0, 1023, DECIMAL_DIGIT_0},
-{NAME15, UECSSHOWSTRING  ,NONES  ,NOTE15  , stringSHOW_REncoder , 2 , &(showValueStatusREncoder)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME0, UECSSHOWDATA  ,UNIT0  ,NOTE0  , DUMMY   , 0 , &(showValueTemp)  , 0, 0, DECIMAL_DIGIT},
+  {NAME1, UECSSELECTDATA  ,NONES  ,NOTE1  , stringSELECT  , 3 , &(setONOFFAUTO_Temp)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME2, UECSINPUTDATA ,UNIT2  ,NOTE2  , DUMMY   , 0 , &(setONTempFromWeb) , 100, 1000, DECIMAL_DIGIT},
+  {NAME3, UECSSHOWSTRING  ,NONES  ,NOTE3  , stringSHOW  , 2 , &(showValueStatusTemp)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME4, UECSSHOWDATA  ,UNIT4  ,NOTE4  , DUMMY   , 0 , &(showValueHumidity)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME5, UECSSELECTDATA  ,NONES  ,NOTE5  , stringSELECT_Humidity , 3 , &(setONOFFAUTO_Humidity)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME6, UECSINPUTDATA ,UNIT6  ,NOTE6  , DUMMY   , 0 , &(setONHumidityFromWeb) , 10, 100, DECIMAL_DIGIT_0},
+  {NAME7, UECSSHOWSTRING  ,NONES  ,NOTE7  , stringSHOW_Humidity , 2 , &(showValueStatusHumidity)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME8, UECSSHOWDATA  ,UNIT8  ,NOTE8  , DUMMY   , 0 , &(showValueIlluminance)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME9, UECSSELECTDATA  ,NONES  ,NOTE9  , stringSELECT_Illuminance , 3 , &(setONOFFAUTO_Illuminance)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME10, UECSINPUTDATA ,UNIT10  ,NOTE10, DUMMY   , 0 , &(setONIlluminanceFromWeb) , 0, 1023, DECIMAL_DIGIT_0},
+  {NAME11, UECSSHOWSTRING  ,NONES  ,NOTE11  , stringSHOW_Illuminance , 2 , &(showValueStatusIlluminance)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME12, UECSSHOWDATA  ,UNIT12  ,NOTE12  , DUMMY   , 0 , &(showValueREncoder)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME13, UECSSELECTDATA  ,NONES  ,NOTE13  , stringSELECT_REncoder , 3 , &(setONOFFAUTO_REncoder)  , 0, 0, DECIMAL_DIGIT_0},
+  {NAME14, UECSINPUTDATA ,UNIT14  ,NOTE14  , DUMMY   , 0 , &(setONREncoderFromWeb) , 0, 1023, DECIMAL_DIGIT_0},
+  {NAME15, UECSSHOWSTRING  ,NONES  ,NOTE15  , stringSHOW_REncoder , 2 , &(showValueStatusREncoder)  , 0, 0, DECIMAL_DIGIT_0},
 };
 
 //////////////////////////////////
@@ -379,30 +379,30 @@ const char ccmUnitCndREncoder[] PROGMEM= "";
 //UARDECS初期化用関数
 //主にCCMの作成とMACアドレスの設定を行う
 //------------------------------------------------------
-void UserInit(){
+void UserInit() {
 //MAC address is printed on sticker of Ethernet Shield.
 //You must assign unique MAC address to each nodes.
 //MACアドレス設定、必ずEthernet Shieldに書かれた値を入力して下さい。
 //全てのノードに異なるMACアドレスを設定する必要があります。
-U_orgAttribute.mac[0] = 0x02;
-U_orgAttribute.mac[1] = 0xA2;
-U_orgAttribute.mac[2] = 0x73;
-U_orgAttribute.mac[3] = 0x0B;
-U_orgAttribute.mac[4] = 0x00;
-U_orgAttribute.mac[5] = 0x02;
+  U_orgAttribute.mac[0] = 0x02;
+  U_orgAttribute.mac[1] = 0xA2;
+  U_orgAttribute.mac[2] = 0x73;
+  U_orgAttribute.mac[3] = 0x0B;
+  U_orgAttribute.mac[4] = 0x00;
+  U_orgAttribute.mac[5] = 0x02;
   
 //Set ccm list
 //CCMの作成
 //UECSsetCCM(送/受の別, CCMID(固有の整数), CCM名(表示用), type, 単位,優先度(通常29), 小数桁数, 送受信頻度);
 //true:送信 false:受信になります
-UECSsetCCM(false, CCMID_InAirTemp, ccmNameTemp, ccmTypeTemp, ccmUnitTemp, 29, DECIMAL_DIGIT, A_10S_0);
-UECSsetCCM(true,  CCMID_CndInAirTemp, ccmNameCndTemp, ccmTypeCndTemp, ccmUnitCndTemp, 29, DECIMAL_DIGIT_0, A_1S_0);
-UECSsetCCM(false, CCMID_InAirHumid, ccmNameHumid, ccmTypeHumid, ccmUnitHumid, 29, DECIMAL_DIGIT_0, A_10S_0);
-UECSsetCCM(true,  CCMID_CndInAirHumid, ccmNameCndHumid, ccmTypeCndHumid, ccmUnitCndHumid, 29,  DECIMAL_DIGIT_0, A_1S_0);
-UECSsetCCM(false, CCMID_Illuminance, ccmNameIlluminance, ccmTypeIlluminance, ccmUnitIlluminance, 29, DECIMAL_DIGIT_0, A_10S_0);
-UECSsetCCM(true,  CCMID_CndIlluminance, ccmNameCndIlluminance, ccmTypeCndIlluminance, ccmUnitCndIlluminance, 29,  DECIMAL_DIGIT_0, A_1S_0);
-UECSsetCCM(false, CCMID_REncoder, ccmNameREncoder, ccmTypeREncoder, ccmUnitREncoder, 29, DECIMAL_DIGIT_0, A_10S_0);
-UECSsetCCM(true,  CCMID_CndREncoder, ccmNameCndREncoder, ccmTypeCndREncoder, ccmUnitCndREncoder, 29,  DECIMAL_DIGIT_0, A_1S_0);
+  UECSsetCCM(false, CCMID_InAirTemp, ccmNameTemp, ccmTypeTemp, ccmUnitTemp, 29, DECIMAL_DIGIT, A_10S_0);
+  UECSsetCCM(true,  CCMID_CndInAirTemp, ccmNameCndTemp, ccmTypeCndTemp, ccmUnitCndTemp, 29, DECIMAL_DIGIT_0, A_1S_0);
+  UECSsetCCM(false, CCMID_InAirHumid, ccmNameHumid, ccmTypeHumid, ccmUnitHumid, 29, DECIMAL_DIGIT_0, A_10S_0);
+  UECSsetCCM(true,  CCMID_CndInAirHumid, ccmNameCndHumid, ccmTypeCndHumid, ccmUnitCndHumid, 29,  DECIMAL_DIGIT_0, A_1S_0);
+  UECSsetCCM(false, CCMID_Illuminance, ccmNameIlluminance, ccmTypeIlluminance, ccmUnitIlluminance, 29, DECIMAL_DIGIT_0, A_10S_0);
+  UECSsetCCM(true,  CCMID_CndIlluminance, ccmNameCndIlluminance, ccmTypeCndIlluminance, ccmUnitCndIlluminance, 29,  DECIMAL_DIGIT_0, A_1S_0);
+  UECSsetCCM(false, CCMID_REncoder, ccmNameREncoder, ccmTypeREncoder, ccmUnitREncoder, 29, DECIMAL_DIGIT_0, A_10S_0);
+  UECSsetCCM(true,  CCMID_CndREncoder, ccmNameCndREncoder, ccmTypeCndREncoder, ccmUnitCndREncoder, 29,  DECIMAL_DIGIT_0, A_1S_0);
 }
 
 //---------------------------------------------------------
@@ -410,7 +410,7 @@ UECSsetCCM(true,  CCMID_CndREncoder, ccmNameCndREncoder, ccmTypeCndREncoder, ccm
 //この関数呼び出し後にEEPROMへの値の保存とWebページの再描画が行われる
 //---------------------------------------------------------
 void OnWebFormRecieved(){
-ChangeThermostat();
+  ChangeThermostat();
 }
 
 
@@ -419,7 +419,7 @@ ChangeThermostat();
 //関数の終了後に自動的にCCMが送信される
 //---------------------------------------------------------
 void UserEverySecond(){
-ChangeThermostat();
+  ChangeThermostat();
 }
 
 //---------------------------------------------------------
@@ -446,7 +446,7 @@ void UserEveryLoop(){
 //呼び出される頻度が高いため,重い処理を記述しないこと。
 //---------------------------------------------------------
 void loop(){
-UECSloop();
+  UECSloop();
 }
 
 //---------------------------------------------------------
@@ -483,7 +483,9 @@ void setup(){
   pinMode(RLY8,OUTPUT);
   digitalWrite(RLY8,HIGH);
   lcd.begin(20,4);
-  lcd.print(pgname);
+  lcd.setCursor(0,0);
+  pgn = String(U_name);
+  lcd.print(U_nodename);
   UECSsetup();
 }
 
