@@ -484,7 +484,7 @@ void setup(){
   digitalWrite(RLY8,HIGH);
   lcd.begin(20,4);
   lcd.setCursor(0,0);
-  pgname = String(U_name);
+  //  pgname = String(U_name);
   lcd.print(U_name);
   UECSsetup();
 }
