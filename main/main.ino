@@ -71,7 +71,8 @@ LiquidCrystal lcd(RS,RW,ENA,DB0,DB1,DB2,DB3,DB4,DB5,DB6,DB7);
 AT24C256      atmem(0);
 EthernetClient client;
 
-char pgname[21],lcdtxt[21];
+char pgname[21],lcdtxt[21],lcdscr[4][21];
+int  lcdmenu=0;
 /////////////////////////////////////
 //IP reset jupmer pin setting
 //IPアドレスリセット用ジャンパーピン設定
@@ -91,7 +92,8 @@ const byte U_InitPin_Sense=LOW;
 //Node basic infomation
 //ノードの基本情報
 ///////////////////////////////////
-const char U_name[] PROGMEM= "M304jp Node v1.20";//MAX 20 chars
+const char U_name[] PROGMEM= "M304jp Node v1.20\0";//MAX 20 chars
+//prog_uchar PU_name[] PROGMEM ="M304jp Node v1.20\0";
 const char U_vender[] PROGMEM= "HOLLY&Co.Ltd.";//MAX 20 chars
 const char U_uecsid[] PROGMEM= "10100C00000B";//12 chars fixed
 const char U_footnote[] PROGMEM= "M304jp UARDECS version";
@@ -447,6 +449,9 @@ void UserEveryLoop(){
 //---------------------------------------------------------
 void loop(){
   UECSloop();
+  dispScr(lcdmenu);
+  //  lcd.setCursor(18,0);
+  //  lcd.print(lcdmenu);
 }
 
 //---------------------------------------------------------
@@ -484,8 +489,8 @@ void setup(){
   digitalWrite(RLY8,HIGH);
   lcd.begin(20,4);
   lcd.setCursor(0,0);
-  //  pgname = String(U_name);
-  lcd.print(U_name);
+  dispScr(0);
+  ///  lcd.print(lcdtxt);
   UECSsetup();
 }
 
@@ -615,15 +620,17 @@ void sidewindow(int m) {
   case 1:
     digitalWrite(RLY7,LOW);
     digitalWrite(RLY8,HIGH);
-    // Side window open
+    lcdmenu |= 0x04;
     break;
   case 2:
     digitalWrite(RLY7,HIGH);
     digitalWrite(RLY8,LOW);
+    lcdmenu |= 0x02;
     break;
   default:
     digitalWrite(RLY7,HIGH);
     digitalWrite(RLY8,HIGH);
+    lcdmenu &= 0x01;
   }
 }
 
@@ -634,9 +641,75 @@ void led_lamp(int m) {
   switch(m) {
   case 0:
     digitalWrite(RLY3,HIGH);
+    lcdmenu &= 0xfe;
     break;
   default:
     digitalWrite(RLY3,LOW);
+    lcdmenu |= 0x01;
     break;
+  }
+}
+
+void progmem2lcdtxt(char ptxt[]) {
+  int k;
+  for(k=0;k<20;k++) {
+    lcdtxt[k]=pgm_read_byte(&ptxt[k]);
+    if (lcdtxt[k]==(char)0) return;
+  }
+}
+
+void clrLcdScr(void) {
+  int x,y;
+  for(y=0;y<4;y++) {
+    for(x=0;x<20;x++) {
+      lcdscr[y][x] = (char)0;
+    }
+  }
+}
+
+void makeScr(int menu) {
+  int i,x;
+  byte ipa[4];
+
+  progmem2lcdtxt(U_name);
+  for(x=0;x<20;x++) {
+    lcdscr[0][x] = lcdtxt[x];
+    if (lcdtxt[x]==(char)0) break;
+  }
+  strcpy(&lcdscr[1][0],"192.168.11.100/24");
+
+  switch(menu) {
+  case 1:
+    strcpy(&lcdscr[2][0],"Side Window STOP    ");
+    strcpy(&lcdscr[3][0],"LED Lamp ON         ");
+    break;
+  case 2:
+    strcpy(&lcdscr[2][0],"Side Window OPEN    ");
+    strcpy(&lcdscr[3][0],"LED Lamp OFF        ");
+    break;
+  case 3:
+    strcpy(&lcdscr[2][0],"Side Window OPEN    ");
+    strcpy(&lcdscr[3][0],"LED Lamp ON         ");
+    break;
+  case 4:
+    strcpy(&lcdscr[2][0],"Side Window CLOSE   ");
+    strcpy(&lcdscr[3][0],"LED Lamp OFF        ");
+    break;
+  case 5:
+    strcpy(&lcdscr[2][0],"Side Window CLOSE   ");
+    strcpy(&lcdscr[3][0],"LED Lamp ON         ");
+    break;		   
+  default:
+    strcpy(&lcdscr[2][0],"Agribusiness        ");
+    strcpy(&lcdscr[3][0],"  Creation Fair 2023");
+  }
+}
+
+void dispScr(int menu) {
+  int x,y;
+  makeScr(menu);
+  for(y=0;y<4;y++) {
+    lcd.setCursor(0,y);
+    lcd.print(&lcdscr[y][0]);
   }
 }
