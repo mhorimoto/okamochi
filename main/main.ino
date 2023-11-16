@@ -91,7 +91,7 @@ const byte U_InitPin_Sense=LOW;
 //Node basic infomation
 //ノードの基本情報
 ///////////////////////////////////
-const char U_name[] PROGMEM= "M304jp Node v1.10";//MAX 20 chars
+const char U_name[] PROGMEM= "M304jp Node v1.20";//MAX 20 chars
 const char U_vender[] PROGMEM= "HOLLY&Co.Ltd.";//MAX 20 chars
 const char U_uecsid[] PROGMEM= "10100C00000B";//12 chars fixed
 const char U_footnote[] PROGMEM= "M304jp UARDECS version";
@@ -484,8 +484,8 @@ void setup(){
   digitalWrite(RLY8,HIGH);
   lcd.begin(20,4);
   lcd.setCursor(0,0);
-  pgn = String(U_name);
-  lcd.print(U_nodename);
+  pgname = String(U_name);
+  lcd.print(U_name);
   UECSsetup();
 }
 
